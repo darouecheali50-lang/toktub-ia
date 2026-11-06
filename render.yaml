@@ -1,0 +1,28 @@
+# Déploiement sur Render (Blueprint) : New → Blueprint → choisir ce dépôt GitHub.
+# Les valeurs « sync: false » sont demandées à la création (collez-les vous-même, elles restent secrètes).
+services:
+  - type: web
+    name: danse-studio
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /api/status
+    disk:
+      name: donnees
+      mountPath: /app/data
+      sizeGB: 5
+    envVars:
+      - key: FAL_KEY
+        sync: false
+      - key: ADMIN_EMAILS
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATA_DIR
+        value: /app/data
+      - key: GALLERY_DIR
+        value: /app/data/galerie
+      - key: ENV_FILE
+        value: /app/data/.env

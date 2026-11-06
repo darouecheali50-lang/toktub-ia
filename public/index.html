@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1110">
+  <title>Danse Studio</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="app.css?v=20261106b">
+</head>
+<body>
+<div class="shell">
+  <!-- Barre latérale -->
+  <aside class="side">
+    <a class="logo" href="#accueil"><img src="icon.svg" alt="" width="32" height="32"><span id="app-name">Danse Studio</span></a>
+    <nav class="nav" aria-label="Menu principal">
+      <a href="#accueil" data-view="accueil"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Accueil</span></a>
+      <a href="#explorer" data-view="explorer"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span>Explorer</span></a>
+      <p class="nav-title">Personnages</p>
+      <a href="#mix" data-view="mix"><svg viewBox="0 0 24 24"><path d="M4 7h4l8 10h4M4 17h4l2.5-3M14 10l2-3h4M17 4l3 3-3 3M17 14l3 3-3 3"/></svg><span>Mix</span><em>Remplacer</em></a>
+      <a href="#move" data-view="move"><svg viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="2"/><path d="M12 8l-4 5 4 2-3 6M12 8l2 5 4-2M8 13l-4-2"/></svg><span>Move</span><em>Danser</em></a>
+      <p class="nav-title">Génération IA</p>
+      <a href="#video" data-view="video"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg><span>Vidéo</span></a>
+      <a href="#image" data-view="image"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg><span>Image</span></a>
+      <p class="nav-title">Outils</p>
+      <a href="#memes" data-view="memes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><span>Mèmes</span><em>Gratuit</em></a>
+      <a href="#creations" data-view="creations"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Mes créations</span></a>
+      <a href="#reglages" data-view="reglages" id="nav-reglages" class="hidden"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span>Personnaliser</span></a>
+      <a href="#tarifs" data-view="tarifs"><svg viewBox="0 0 24 24"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.5 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg><span>Abonnements</span></a>
+    </nav>
+    <div class="account-box" id="account-box">
+      <a href="#compte" class="credits-pill hidden" id="credits-pill" title="Mes crédits"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1 1.3-2 3-2s3 .8 3 2-1.3 1.7-3 2-3 1-3 2 1.3 2 3 2 3-1 3-2"/></svg><span id="credits-count">0</span></a>
+      <button class="btn sm" type="button" id="login-btn" data-auth="login">Se connecter</button>
+      <a href="#compte" class="link hidden" id="account-link">Mon compte</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- Service non configuré -->
+    <section id="not-configured" class="banner hidden" aria-live="polite">
+      <strong>Service vidéo non configuré.</strong>
+      La génération est désactivée. Manquant : <span id="missing-list"></span>.
+      <a href="#aide">Comment l'activer</a>
+      <form id="setup-form" class="setup hidden">
+        <p><strong>Activez la génération en 1 minute :</strong> sur fal.ai, cliquez sur <em>Copy</em> à côté de votre clé <code>fal_sk_…</code>, puis collez-la ici.</p>
+        <label class="field">Votre clé fal.ai <input id="setup-key" type="password" autocomplete="off" placeholder="Collez la clé ici (Ctrl + V)" required></label>
+        <label class="field">Votre e-mail (vous aurez des crédits illimités) <input id="setup-email" type="email" autocomplete="email" placeholder="vous@exemple.com"></label>
+        <button class="btn" type="submit">Enregistrer et activer</button>
+        <p class="error" id="setup-error" role="alert"></p>
+      </form>
+    </section>
+
+    <!-- ACCUEIL -->
+    <section class="view" data-view="accueil">
+      <h1 class="hero" id="hero-title">Que souhaitez-vous créer aujourd'hui ?</h1>
+      <div class="composer" id="composer">
+        <div class="composer-top">
+          <div class="seg" role="tablist" aria-label="Type de création">
+            <button type="button" data-mode="video" class="on" aria-selected="true">Vidéo</button>
+            <button type="button" data-mode="image" aria-selected="false">Image</button>
+          </div>
+          <span id="composer-cost" class="pill"></span>
+        </div>
+        <textarea id="prompt" rows="3" maxlength="1500" placeholder="Décrivez la vidéo que vous imaginez…"></textarea>
+        <div class="composer-bottom">
+          <div class="chips">
+            <label class="chip" id="chip-start-image" title="Image de départ (facultatif)">
+              <input id="start-image-input" type="file" accept="image/jpeg,image/png,image/webp">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
+              <span id="start-image-label">Image de départ</span>
+            </label>
+            <select id="opt-aspect" class="chip" aria-label="Format"></select>
+            <select id="opt-duration" class="chip" aria-label="Durée"></select>
+            <select id="opt-size" class="chip hidden" aria-label="Format de l'image"></select>
+          </div>
+          <button id="composer-go" class="btn send" type="button" aria-label="Générer" disabled>
+            <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </button>
+        </div>
+        <p id="start-image-status" class="file-status"></p>
+      </div>
+
+      <div class="images-bar hidden" data-images-bar></div>
+      <h2 class="section-title">Outils à la une</h2>
+      <div class="tools-grid" id="tools-grid"></div>
+      <p class="fine admin-hint hidden" id="cards-hint">Administrateur : glissez une image sur une carte pour la changer, ou ouvrez <a href="#reglages">Personnaliser</a>.</p>
+
+      <div class="section-head"><h2 class="section-title">Inspirations</h2><a href="#explorer" class="link">Tout voir →</a></div>
+      <div class="masonry" id="home-gallery"></div>
+    </section>
+
+    <!-- EXPLORER -->
+    <section class="view" data-view="explorer">
+      <h1 class="page-title">Explorer</h1>
+      <p class="muted">Cliquez sur une idée pour voir son prompt et l'utiliser.</p>
+      <div class="tabs" id="explore-tabs">
+        <button type="button" data-filter="tout" class="on">Tendances</button>
+        <button type="button" data-filter="image">Images</button>
+        <button type="button" data-filter="video">Vidéos</button>
+      </div>
+      <div class="masonry" id="gallery"></div>
+      <p class="fine" id="gallery-note"></p>
+      <div class="images-bar hidden" data-images-bar></div>
+    </section>
+
+    <!-- MIX / MOVE (même écran, outil différent) -->
+    <section class="view" data-view="anim">
+      <div class="anim-layout">
+        <div class="card anim-panel">
+          <h1 class="page-title" id="anim-title"></h1>
+          <p class="muted" id="anim-desc"></p>
+          <div class="drops">
+            <div class="drop-box">
+              <label class="drop">
+                <input id="video-input" type="file" accept="video/mp4,video/quicktime,video/webm">
+                <svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>
+                <strong>Ajouter une vidéo</strong>
+                <span class="hint" id="video-limits"></span>
+              </label>
+              <video id="video-preview" class="preview hidden" controls playsinline></video>
+              <div class="file-status" id="video-status" aria-live="polite"></div>
+            </div>
+            <div class="drop-box">
+              <label class="drop">
+                <input id="image-input" type="file" accept="image/jpeg,image/png,image/webp">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+                <strong>Ajouter une photo</strong>
+                <span class="hint">Personnage en entier, de face · JPEG, PNG, WebP</span>
+              </label>
+              <img id="image-preview" class="preview img hidden" alt="Aperçu du personnage">
+              <div class="file-status" id="image-status" aria-live="polite"></div>
+              <a class="link" href="#image" id="make-character">Pas de photo ? Créer un personnage avec l'IA →</a>
+            </div>
+          </div>
+
+          <fieldset class="choices">
+            <legend>Musique</legend>
+            <label><input type="radio" name="audio-mode" value="original" checked> Garder le son de la vidéo d'origine</label>
+            <label><input type="radio" name="audio-mode" value="replace"> Remplacer par un fichier audio</label>
+          </fieldset>
+          <div id="audio-block" class="hidden">
+            <label class="drop small">
+              <input id="audio-input" type="file" accept="audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/ogg,audio/flac">
+              <strong>Choisir un fichier audio</strong><span class="hint">MP3, WAV, M4A, OGG ou FLAC</span>
+            </label>
+            <audio id="audio-preview" class="hidden" controls></audio>
+            <div class="file-status" id="audio-status" aria-live="polite"></div>
+          </div>
+
+          <div class="row-2">
+            <label class="field">Qualité <select id="resolution"></select></label>
+            <label class="field">Fluidité <select id="fluidite"><option value="eco">Économique (16 images/s) — moins cher, plus rapide</option><option value="origine">Fluide (images/s de la vidéo)</option></select></label>
+          </div>
+          <p id="anim-cost" class="cost muted"></p>
+          <button id="anim-go" class="btn big" type="button" disabled>Générer la vidéo</button>
+          <p class="fine">La fidélité dépend du moteur IA et des fichiers fournis : le résultat n'est pas garanti identique au mouvement d'origine.</p>
+        </div>
+        <div class="card how">
+          <h2>Comment ça marche</h2>
+          <ol class="how-steps">
+            <li><span>1</span><div><strong>Ajoutez une vidéo</strong><small id="how-1"></small></div></li>
+            <li><span>2</span><div><strong>Ajoutez une photo</strong><small>Le personnage, visible en entier, bras dégagés.</small></div></li>
+            <li><span>3</span><div><strong>Générez</strong><small id="how-3"></small></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEO / IMAGE (prompt) -->
+    <section class="view" data-view="prompt">
+      <div class="card narrow-wide">
+        <h1 class="page-title" id="prompt-title"></h1>
+        <p class="muted" id="prompt-desc"></p>
+        <label class="field">Description (prompt)
+          <textarea id="p-prompt" rows="5" maxlength="1500" placeholder="Ex. : un chat orange qui saute d'un canapé, ralenti, lumière douce…"></textarea>
+        </label>
+        <label class="gen-char hidden" id="p-character-f"><input type="checkbox" id="p-character">
+          <span><strong>Personnage pour Mix / Move</strong> — corps entier, de face, bras dégagés, fond simple (idéal pour reprendre une danse)</span></label>
+        <div class="row-fields">
+          <label class="field" id="p-aspect-f">Format <select id="p-aspect"></select></label>
+          <label class="field" id="p-duration-f">Durée <select id="p-duration"></select></label>
+          <label class="field" id="p-size-f">Format <select id="p-size"></select></label>
+        </div>
+        <div id="p-image-block">
+          <label class="drop small">
+            <input id="p-image-input" type="file" accept="image/jpeg,image/png,image/webp">
+            <strong>Image de départ (facultatif)</strong><span class="hint">L'IA anime cette image selon votre description</span>
+          </label>
+          <img id="p-image-preview" class="preview img hidden" alt="Image de départ">
+          <div class="file-status" id="p-image-status"></div>
+        </div>
+        <p id="p-cost" class="cost muted"></p>
+        <button id="p-go" class="btn big" type="button" disabled>Générer</button>
+        <p class="fine">Les contenus sont vérifiés par le filtre de sécurité du fournisseur ; certaines demandes peuvent être refusées.</p>
+      </div>
+    </section>
+
+    <!-- MÈMES -->
+    <section class="view" data-view="memes">
+      <h1 class="page-title">Générateur de mèmes</h1>
+      <p class="muted">Ajoutez votre image et votre texte, puis téléchargez. Gratuit : rien n'est envoyé sur internet.</p>
+      <div class="meme-layout">
+        <div class="card meme-canvas-wrap">
+          <canvas id="meme-canvas" width="800" height="800" aria-label="Aperçu du mème"></canvas>
+        </div>
+        <div class="card meme-tools">
+          <label class="drop small">
+            <input id="meme-input" type="file" accept="image/*">
+            <strong>Choisir une image</strong><span class="hint">Votre photo ou votre dessin</span>
+          </label>
+          <label class="field">Texte en haut
+            <div class="row"><input id="meme-top" type="text" maxlength="120" placeholder="Texte en haut"><button class="btn ghost sm" data-size="top-" type="button">A−</button><button class="btn ghost sm" data-size="top+" type="button">A+</button></div>
+          </label>
+          <label class="field">Texte en bas
+            <div class="row"><input id="meme-bottom" type="text" maxlength="120" placeholder="Texte en bas"><button class="btn ghost sm" data-size="bottom-" type="button">A−</button><button class="btn ghost sm" data-size="bottom+" type="button">A+</button></div>
+          </label>
+          <button id="meme-download" class="btn big" type="button">Télécharger le mème</button>
+          <button id="meme-animate" class="btn ghost" type="button">Faire danser cette image (Move) →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MES CRÉATIONS -->
+    <section class="view" data-view="creations">
+      <h1 class="page-title">Mes créations</h1>
+      <p class="muted" id="creations-note"></p>
+      <div class="creations" id="creations"></div>
+    </section>
+
+    <!-- ABONNEMENTS -->
+    <section class="view" data-view="tarifs">
+      <h1 class="page-title center">Choisissez votre formule</h1>
+      <p class="muted center" id="tarifs-sub">Une image coûte 1 crédit. Sans engagement, annulable à tout moment.</p>
+      <div class="seg center-seg" id="interval-seg" role="tablist" aria-label="Facturation">
+        <button type="button" data-interval="month" class="on" aria-selected="true">Mensuel</button>
+        <button type="button" data-interval="year" aria-selected="false">Annuel <em>2 mois offerts</em></button>
+      </div>
+      <div class="plans" id="plans"></div>
+      <p class="fine center" id="billing-note"></p>
+      <div class="card narrow-wide credit-table">
+        <h2>Combien de crédits pour…</h2>
+        <ul class="notes" id="credit-examples"></ul>
+      </div>
+    </section>
+
+    <!-- PERSONNALISER (administrateur) -->
+    <section class="view" data-view="reglages">
+      <h1 class="page-title">Personnaliser le site</h1>
+      <p class="muted">Visible uniquement par vous (administrateur). Les changements s'appliquent tout de suite pour tous les visiteurs.</p>
+      <form class="card narrow-wide" id="brand-form">
+        <h2>Nom et accueil</h2>
+        <label class="field">Nom de l'application <input type="text" id="set-name" maxlength="40" required></label>
+        <label class="field">Phrase d'accueil <input type="text" id="set-tagline" maxlength="120"></label>
+        <h2>Prix des créations</h2>
+        <label class="field">Valeur d'un crédit (en dollars de coût IA)
+          <input id="set-credit" type="number" min="0.03" max="1" step="0.01"></label>
+        <p class="fine">Plus la valeur est haute, moins chaque création coûte de crédits à vos clients. Aperçu avec cette valeur :</p>
+        <ul class="notes" id="set-preview"></ul>
+        <p class="fine" id="set-margin"></p>
+        <h2>Images du site</h2>
+        <div class="images-bar hidden" data-images-bar></div>
+        <h2>Cartes des outils</h2>
+        <div class="card-editors" id="card-editors"></div>
+        <button class="btn big" type="submit">Enregistrer</button>
+        <p class="error" id="set-error" aria-live="polite"></p>
+        <p class="ok-text" id="set-ok" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- MON COMPTE -->
+    <section class="view" data-view="compte">
+      <div class="card narrow-wide">
+        <h1 class="page-title">Mon compte</h1>
+        <p id="pay-ok" class="ok-banner hidden">Merci ! Votre paiement est confirmé. Vos crédits apparaissent dès que Stripe a validé la facture (quelques secondes).</p>
+        <dl class="kv" id="account-details"></dl>
+        <div class="row">
+          <a class="btn" href="#tarifs" id="acc-upgrade">Choisir un abonnement</a>
+          <button class="btn ghost" type="button" id="acc-portal">Gérer mon abonnement</button>
+          <button class="btn ghost" type="button" id="acc-logout">Se déconnecter</button>
+        </div>
+        <p class="error" id="acc-error"></p>
+      </div>
+
+      <div class="card narrow-wide admin-card hidden" id="admin-stripe">
+        <h2>Brancher Stripe (administrateur)</h2>
+        <p class="muted" id="stripe-state"></p>
+        <ol class="howto">
+          <li>Sur <a href="https://dashboard.stripe.com/test/apikeys" target="_blank" rel="noopener">dashboard.stripe.com</a>, activez le <strong>mode test</strong> (interrupteur en haut à droite) pour commencer sans vrai argent.</li>
+          <li>Ouvrez <strong>Développeurs → Clés API</strong>, cliquez sur « Révéler » à côté de la <strong>clé secrète</strong> (<code>sk_test_…</code>) et copiez-la.</li>
+          <li>Collez-la ci-dessous : l'application crée automatiquement les 4 prix « Danse Studio » (6 $ et 9 $ par mois, 60 $ et 90 $ par an). Vos autres produits Stripe ne sont pas modifiés.</li>
+        </ol>
+        <form id="stripe-form" class="setup">
+          <label class="field">Clé secrète Stripe <input id="stripe-key" type="password" autocomplete="off" placeholder="sk_test_… (Ctrl + V)" required></label>
+          <label class="field">Adresse publique du site (quand il sera en ligne, facultatif) <input id="stripe-url" type="text" placeholder="https://danse-studio.onrender.com"></label>
+          <button class="btn" type="submit">Brancher Stripe</button>
+          <p class="error" id="stripe-error" role="alert"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- AIDE -->
+    <section class="view" data-view="aide">
+      <div class="card narrow-wide">
+        <h1 class="page-title">Activer la génération</h1>
+        <ol class="howto">
+          <li>Créez un compte sur <a href="https://fal.ai" target="_blank" rel="noopener">fal.ai</a> et ajoutez quelques crédits (Billing).</li>
+          <li>Créez une clé sur <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener">fal.ai/dashboard/keys</a>, préréglage <strong>API</strong>.</li>
+          <li>Dans le dossier de l'application, ouvrez <code>.env</code> avec le Bloc-notes : collez la clé après <code>FAL_KEY=</code> et mettez votre e-mail après <code>ADMIN_EMAILS=</code> (crédits illimités pour vous).</li>
+          <li>Pour encaisser les abonnements : suivez la partie « Stripe » du fichier README.</li>
+          <li>Enregistrez, fermez la fenêtre noire et relancez « Lancer Danse Studio ».</li>
+          <li>Facultatif : lancez <code>npm run galerie</code> pour créer les images de la galerie Explorer (≈ 0,05 $).</li>
+        </ol>
+        <h2>Tarifs fal.ai vérifiés</h2>
+        <ul id="pricing-list" class="notes"></ul>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Fenêtre : détail d'une idée de la galerie -->
+<dialog id="idea-dialog" class="dialog">
+  <div class="idea">
+    <div class="idea-media" id="idea-media"></div>
+    <div class="idea-info">
+      <p class="eyebrow" id="idea-type"></p>
+      <h2 id="idea-title"></h2>
+      <p class="eyebrow">Prompt</p>
+      <p id="idea-prompt" class="idea-prompt"></p>
+      <div class="idea-meta"><div><p class="eyebrow">Outil</p><p id="idea-tool"></p></div><div><p class="eyebrow">Format</p><p id="idea-format"></p></div></div>
+      <div class="row">
+        <button id="idea-use" class="btn" type="button">Utiliser ce prompt</button>
+        <button id="idea-copy" class="btn ghost" type="button">Copier</button>
+      </div>
+    </div>
+  </div>
+  <button class="dialog-close" type="button" data-close aria-label="Fermer">×</button>
+</dialog>
+
+<!-- Fenêtre : connexion / inscription -->
+<dialog id="auth-dialog" class="dialog auth">
+  <form id="auth-form" class="auth-form">
+    <div class="seg" role="tablist" aria-label="Compte">
+      <button type="button" data-mode="signup" class="on" aria-selected="true">Créer un compte</button>
+      <button type="button" data-mode="login" aria-selected="false">Se connecter</button>
+    </div>
+    <p class="muted" id="auth-intro"></p>
+    <label class="field">E-mail <input id="auth-email" type="email" autocomplete="email" required maxlength="200"></label>
+    <label class="field">Mot de passe <input id="auth-password" type="password" autocomplete="new-password" required minlength="8" maxlength="200" placeholder="8 caractères minimum"></label>
+    <button class="btn big" type="submit" id="auth-submit">Créer mon compte</button>
+    <p class="error" id="auth-error" role="alert"></p>
+  </form>
+  <button class="dialog-close" type="button" data-close aria-label="Fermer">×</button>
+</dialog>
+
+<!-- Fenêtre : traitement et résultat -->
+<dialog id="job-dialog" class="dialog job">
+  <div id="job-progress">
+    <div class="job-preview" id="job-preview" aria-hidden="true"><span class="job-preview-label">Génération en cours…</span></div>
+    <h2>Création en cours</h2>
+    <p class="muted" id="job-tool"></p>
+    <ol class="timeline" id="timeline">
+      <li data-state="envoi">Envoi au service IA</li>
+      <li data-state="attente">Attente chez le service IA</li>
+      <li data-state="generation">Génération par l'IA</li>
+      <li data-state="assemblage" id="tl-final">Finalisation</li>
+      <li data-state="termine">Terminé</li>
+    </ol>
+    <p id="progress-detail" class="muted"></p>
+    <p class="fine">Vous pouvez fermer cette fenêtre : la création continue et apparaîtra dans « Mes créations ». L'état affiché est celui du service, sans pourcentage estimé.</p>
+  </div>
+  <div id="job-failure" class="hidden" role="alert">
+    <h2 class="danger">La génération a échoué</h2>
+    <p id="failure-message"></p>
+  </div>
+  <div id="job-result" class="hidden">
+    <h2>Votre création est prête</h2>
+    <div id="result-media"></div>
+    <ul id="result-notes" class="notes"></ul>
+    <div class="row actions">
+      <a id="download" class="btn" href="#" download>Télécharger</a>
+      <button class="btn ghost" type="button" data-action="restart">Nouvelle création</button>
+    </div>
+  </div>
+  <button class="dialog-close" type="button" data-close aria-label="Fermer">×</button>
+</dialog>
+
+<script src="app.js?v=20261106b" type="module"></script>
+</body>
+</html>
