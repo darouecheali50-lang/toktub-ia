@@ -148,7 +148,8 @@ export function loadConfig(env = process.env) {
     falKey: env.FAL_KEY || "",
     adminEmails: String(env.ADMIN_EMAILS || "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean),
     freeCredits: Number.isFinite(Number(env.FREE_CREDITS)) && env.FREE_CREDITS !== "" && env.FREE_CREDITS != null ? Number(env.FREE_CREDITS) : 3,
-    publicUrl: (env.PUBLIC_URL || "").replace(/\/$/, ""),
+    // Render fournit RENDER_EXTERNAL_URL automatiquement : PUBLIC_URL devient facultatif.
+    publicUrl: (env.PUBLIC_URL || env.RENDER_EXTERNAL_URL || "").replace(/\/$/, ""),
     // Valeur d'un crédit en coût fal : plus elle est haute, moins chaque création coûte de crédits.
     // Modifiable par l'administrateur dans « Personnaliser ».
     creditUsd: Number(env.CREDIT_USD) > 0 ? Number(env.CREDIT_USD) : 0.09,

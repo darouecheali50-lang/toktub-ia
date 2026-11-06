@@ -206,7 +206,10 @@ $("#stripe-form").addEventListener("submit", async (e) => {
   const btn = e.submitter;
   if (btn) { btn.disabled = true; btn.textContent = "Connexion à Stripe…"; }
   try {
-    const r = await api("/api/admin/stripe", { method: "POST", body: JSON.stringify({ secretKey: $("#stripe-key").value, publicUrl: $("#stripe-url").value }) });
+    // En ligne (https), l'adresse du site est prise automatiquement si la case est vide.
+    const typed = $("#stripe-url").value.trim();
+    const publicUrl = typed || (location.protocol === "https:" ? location.origin : "");
+    const r = await api("/api/admin/stripe", { method: "POST", body: JSON.stringify({ secretKey: $("#stripe-key").value, publicUrl }) });
     $("#stripe-key").value = "";
     state.status = r.status;
     renderPlans();

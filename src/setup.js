@@ -16,9 +16,18 @@ function setLine(text, name, value) {
   return re.test(text) ? text.replace(re, `${name}=${value}`) : `${text.replace(/\s*$/, "")}\n${name}=${value}\n`;
 }
 
+// Contenu actuel du fichier d'environnement ; à défaut le modèle .env.example ; à défaut un fichier vide
+// (en ligne, le modèle peut manquer : les fichiers commençant par un point ne sont pas toujours envoyés).
+function readEnvText(cfg, file) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  if (fs.existsSync(file)) return fs.readFileSync(file, "utf8");
+  const example = path.join(cfg.root, ".env.example");
+  return fs.existsSync(example) ? fs.readFileSync(example, "utf8") : "";
+}
+
 export function writeEnv(cfg, entries) {
   const file = cfg.envFile || path.join(cfg.root, ".env");
-  let text = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : fs.readFileSync(path.join(cfg.root, ".env.example"), "utf8");
+  let text = readEnvText(cfg, file);
   const eol = text.includes("\r\n") ? "\r\n" : "\n";
   text = text.replace(/\r\n/g, "\n");
   for (const [k, v] of Object.entries(entries)) text = setLine(text, k, v);
@@ -31,7 +40,7 @@ export function saveSetup(cfg, { falKey, adminEmail }) {
   if (!/^[A-Za-z0-9_\-:.]{16,300}$/.test(key)) throw Object.assign(new Error("Cette clé ne ressemble pas à une clé fal (elle commence en général par « fal_sk_ »). Recopiez-la avec le bouton Copy de fal.ai."), { status: 400 });
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) throw Object.assign(new Error("Adresse e-mail invalide."), { status: 400 });
   const file = cfg.envFile || path.join(cfg.root, ".env");
-  let text = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : fs.readFileSync(path.join(cfg.root, ".env.example"), "utf8");
+  let text = readEnvText(cfg, file);
   const eol = text.includes("\r\n") ? "\r\n" : "\n";
   text = text.replace(/\r\n/g, "\n");
   text = setLine(text, "FAL_KEY", key);
